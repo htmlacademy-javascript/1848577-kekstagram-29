@@ -1,5 +1,7 @@
 const checkLength = (string, maxLength) => string.length <= maxLength;
 
+checkLength('проверяемая строка', 20);
+
 const checkPalindrome = (string) => {
   const normalizedString = string.replaceAll(' ', '').toUpperCase();
   let reversedString = '';
@@ -8,6 +10,8 @@ const checkPalindrome = (string) => {
   }
   return normalizedString === reversedString;
 };
+
+checkPalindrome('Кекс');
 
 const getNumbers = (string) => {
   string = string.toString();
@@ -22,3 +26,5 @@ const getNumbers = (string) => {
 
   return Number(result) || NaN;
 };
+
+getNumbers('2023 год');
