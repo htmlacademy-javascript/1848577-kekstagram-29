@@ -1,8 +1,8 @@
-const checkLength = (string, maxLength) => string.length <= maxLength;
+const isStringOverMaxLength = (string, maxLength) => string.length <= maxLength;
 
-checkLength('проверяемая строка', 20);
+isStringOverMaxLength('проверяемая строка', 20);
 
-const checkPalindrome = (string) => {
+const isPalindrome = (string) => {
   const normalizedString = string.replaceAll(' ', '').toUpperCase();
   let reversedString = '';
   for (let i = normalizedString.length - 1; i >= 0; i--) {
@@ -11,9 +11,9 @@ const checkPalindrome = (string) => {
   return normalizedString === reversedString;
 };
 
-checkPalindrome('Кекс');
+isPalindrome('Кекс');
 
-const getNumbers = (string) => {
+const extractNumbers = (string) => {
   string = string.toString();
   let result = '';
   let number;
@@ -27,4 +27,4 @@ const getNumbers = (string) => {
   return Number(result) || NaN;
 };
 
-getNumbers('2023 год');
+extractNumbers('2023 год');
