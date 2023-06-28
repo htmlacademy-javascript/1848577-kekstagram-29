@@ -1,3 +1,1 @@
-import {createArrayOfPhotos} from './data.js';
-
-createArrayOfPhotos();
+import './post.js';
