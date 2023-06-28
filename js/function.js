@@ -29,7 +29,7 @@ const extractNumbers = (string) => {
 
 extractNumbers('2023 год');
 
-const isEnoighTime = (workStart, workEnd, meetingStart, meetingDuration) => {
+const isEnoughTime = (workStart, workEnd, meetingStart, meetingDuration) => {
   const workStartSplited = workStart.split(':');
   const workEndSplited = workEnd.split(':');
   const meetingStartSplited = meetingStart.split(':');
@@ -39,12 +39,7 @@ const isEnoighTime = (workStart, workEnd, meetingStart, meetingDuration) => {
   const meetingStartMinutes = parseInt(meetingStartSplited[0], 10) * 60 + parseInt(meetingStartSplited[1], 10);
   const meetingEnd = meetingStartMinutes + meetingDuration;
 
-  if (meetingStartMinutes >= workStartMinutes && meetingEnd <= workEndMinutes) {
-    return true;
-  } else {
-    return false;
-  }
-
+  return (meetingStartMinutes >= workStartMinutes && meetingEnd <= workEndMinutes);
 };
 
-isEnoighTime('08:00', '17:00', '14:00', 90);
+isEnoughTime('08:00', '17:00', '14:00', 90);
