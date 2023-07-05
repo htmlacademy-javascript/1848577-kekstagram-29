@@ -1,4 +1,7 @@
 import {createArrayOfPhotos} from './data.js';
 import {renderPictures} from './post.js';
+import {showBigPicture} from './big-picture.js';
 
-renderPictures(createArrayOfPhotos());
+const arrayOfPhotos = createArrayOfPhotos();
+renderPictures(arrayOfPhotos);
+showBigPicture(arrayOfPhotos);
