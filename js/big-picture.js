@@ -28,11 +28,11 @@ const openBigPicture = () => {
   commentsLoader.classList.add('hidden');
   body.classList.add('modal-open');
 
-  bigPictureCancel.addEventListener('click', () => closeBigPicture());
+  bigPictureCancel.addEventListener('click', closeBigPicture);
   document.addEventListener('keydown', onDocumentKeydown);
 };
 
-const showBigPicture = (photos) => {
+const initBigPicture = (photos) => {
   picturesContainer.addEventListener('click', (evt) => {
     if (evt.target.closest('.picture')) {
       openBigPicture();
@@ -52,4 +52,4 @@ function onDocumentKeydown (evt) {
   }
 }
 
-export {showBigPicture};
+export {initBigPicture};
