@@ -64,14 +64,17 @@ const closeBigPicture = () => {
 
   document.removeEventListener('keydown', onDocumentKeydown);
   document.removeEventListener('keydown', onDocumentKeydown);
+  commentsLoader.removeEventListener('click', onRenderComments);
   commentsShown = 0;
 };
+
+const onCloseBigPicture = () => closeBigPicture();
 
 const openBigPicture = () => {
   bigPicture.classList.remove('hidden');
   body.classList.add('modal-open');
 
-  bigPictureCancel.addEventListener('click', closeBigPicture);
+  bigPictureCancel.addEventListener('click', onCloseBigPicture);
   document.addEventListener('keydown', onDocumentKeydown);
   commentsLoader.addEventListener('click', onRenderComments);
 };
