@@ -101,4 +101,4 @@ function onDocumentKeydown (evt) {
 }
 
 
-export {initBigPicture};
+export {initBigPicture, body};
