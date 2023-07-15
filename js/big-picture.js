@@ -1,12 +1,10 @@
-import {isEscapeKey} from './util.js';
-// import {renderComments, commentsLoader, commentsShown} from './comments.js';
+import {isEscapeKey, CONSTS} from './util.js';
 
 const RENDERED_COMMENTS = 5;
 
 const picturesContainer = document.querySelector('.pictures');
 const bigPicture = document.querySelector('.big-picture');
 const bigPictureCancel = document.querySelector('.big-picture__cancel');
-const body = document.querySelector('body');
 const commentsWrapper = document.querySelector('.social__comments');
 const commentElement = document.querySelector('.social__comment');
 const commentsLoader = document.querySelector('.comments-loader');
@@ -60,7 +58,7 @@ const renderBigPicture = ({url, likes, description}) => {
 
 const closeBigPicture = () => {
   bigPicture.classList.add('hidden');
-  body.classList.remove('modal-open');
+  CONSTS.BODY.classList.remove('modal-open');
 
   document.removeEventListener('keydown', onDocumentKeydown);
   document.removeEventListener('keydown', onDocumentKeydown);
@@ -72,7 +70,7 @@ const onCloseBigPicture = () => closeBigPicture();
 
 const openBigPicture = () => {
   bigPicture.classList.remove('hidden');
-  body.classList.add('modal-open');
+  CONSTS.BODY.classList.add('modal-open');
 
   bigPictureCancel.addEventListener('click', onCloseBigPicture);
   document.addEventListener('keydown', onDocumentKeydown);
