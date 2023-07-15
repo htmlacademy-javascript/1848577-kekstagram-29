@@ -1,16 +1,42 @@
-import {isEscapeKey} from './util.js';
+import {isEscapeKey, CONSTS} from './util.js';
 
 const MAX_HASHTAG_COUNT = 5;
 const MAX_HASHTAG_LENGTH = 20;
 const VALID_HASHTAG_SYMBOLS = /^#[a-zа-яё0-9]{1,19}$/i;
+const IMG_SCALE_STEP = 25;
+const IMG_SCALE_MAX = 100;
+const IMG_SCALE_MIN = 25;
 
 const imgUploadInput = document.querySelector('.img-upload__input');
 const imgUploadOverlay = document.querySelector('.img-upload__overlay');
 const imgUploadCancel = document.querySelector('.img-upload__cancel');
-const body = document.querySelector('body');
 const imgUploadForm = document.querySelector('.img-upload__form');
 const hashtagsField = document.querySelector('.text__hashtags');
 const commentField = document.querySelector('.text__description');
+
+const scaleControlSmaller = document.querySelector('.scale__control--smaller');
+const scaleControlBigger = document.querySelector('.scale__control--bigger');
+const scaleControlValue = document.querySelector('.scale__control--value');
+const imgPreview = document.querySelector('.img-upload__preview').querySelector('img');
+
+const changeScaleSmaller = () => {
+  if (parseInt(scaleControlValue.value, 10) > IMG_SCALE_MIN) {
+    const imgPreviewStep = (parseInt(scaleControlValue.value, 10) - IMG_SCALE_STEP) / 100;
+    imgPreview.style.transform = `scale(${imgPreviewStep})`;
+    scaleControlValue.value = `${imgPreviewStep * 100}%`;
+  }
+};
+
+const changeScaleBigger = () => {
+  if (parseInt(scaleControlValue.value, 10) < IMG_SCALE_MAX) {
+    const imgPreviewStep = (parseInt(scaleControlValue.value, 10) + IMG_SCALE_STEP) / 100;
+    imgPreview.style.transform = `scale(${imgPreviewStep})`;
+    scaleControlValue.value = `${imgPreviewStep * 100}%`;
+  }
+};
+
+scaleControlSmaller.addEventListener('click', changeScaleSmaller);
+scaleControlBigger.addEventListener('click', changeScaleBigger);
 
 const pristine = new Pristine(imgUploadForm, {
   classTo: 'img-upload__field-wrapper',
@@ -19,7 +45,7 @@ const pristine = new Pristine(imgUploadForm, {
 
 const OnUploadOverlayOpen = () => {
   imgUploadOverlay.classList.remove('hidden');
-  body.classList.add('modal-open');
+  CONSTS.BODY.classList.add('modal-open');
   imgUploadCancel.addEventListener('click', onUploadCancel);
   document.addEventListener('keydown', onDocumentKeydown);
 };
@@ -28,7 +54,7 @@ function onUploadCancel () {
   imgUploadForm.reset();
   pristine.reset();
   imgUploadOverlay.classList.add('hidden');
-  body.classList.remove('modal-open');
+  CONSTS.BODY.classList.remove('modal-open');
   document.removeEventListener('keydown', onDocumentKeydown);
 }
 
