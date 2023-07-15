@@ -3,9 +3,18 @@ import {isEscapeKey, CONSTS} from './util.js';
 const MAX_HASHTAG_COUNT = 5;
 const MAX_HASHTAG_LENGTH = 20;
 const VALID_HASHTAG_SYMBOLS = /^#[a-zа-яё0-9]{1,19}$/i;
+
 const IMG_SCALE_STEP = 25;
 const IMG_SCALE_MAX = 100;
 const IMG_SCALE_MIN = 25;
+
+// const EFFECTS = {
+//   chrome: {
+//     min: 0,
+//     max: 1,
+//     step: 0.1
+//   }
+// };
 
 const imgUploadInput = document.querySelector('.img-upload__input');
 const imgUploadOverlay = document.querySelector('.img-upload__overlay');
@@ -18,6 +27,11 @@ const scaleControlSmaller = document.querySelector('.scale__control--smaller');
 const scaleControlBigger = document.querySelector('.scale__control--bigger');
 const scaleControlValue = document.querySelector('.scale__control--value');
 const imgPreview = document.querySelector('.img-upload__preview').querySelector('img');
+
+const sliderContainer = document.querySelector('.img-upload__effect-level');
+const sliderElement = sliderContainer.querySelector('.effect-level__slider');
+const sliderValue = sliderContainer.querySelector('.effect-level__value');
+const effectsList = document.querySelector('.effects__list');
 
 const changeScaleSmaller = () => {
   if (parseInt(scaleControlValue.value, 10) > IMG_SCALE_MIN) {
@@ -37,6 +51,109 @@ const changeScaleBigger = () => {
 
 scaleControlSmaller.addEventListener('click', changeScaleSmaller);
 scaleControlBigger.addEventListener('click', changeScaleBigger);
+
+sliderValue.value = 100;
+
+noUiSlider.create(sliderElement, {
+  range: {
+    min: 0,
+    max: 100,
+  },
+  start: 100,
+  step: 1,
+  connect: 'lower'
+});
+
+effectsList.addEventListener('change', (evt) => {
+  const selectedEffect = evt.target.value;
+  switch (selectedEffect) {
+    case 'none':
+      sliderElement.noUiSlider.off('update');
+      sliderContainer.style.display = 'none';
+      imgPreview.style.removeProperty('filter');
+      break;
+    case 'chrome':
+      sliderElement.noUiSlider.off('update');
+      sliderContainer.style.display = 'block';
+      sliderElement.noUiSlider.updateOptions({
+        range: {
+          min: 0,
+          max: 1,
+        },
+        start: 1,
+        step: 0.1
+      });
+      sliderElement.noUiSlider.on('update', () => {
+        sliderValue.value = sliderElement.noUiSlider.get();
+        imgPreview.style.filter = `grayscale(${sliderValue.value})`;
+      });
+      break;
+    case 'sepia':
+      sliderElement.noUiSlider.off('update');
+      sliderContainer.style.display = 'block';
+      sliderElement.noUiSlider.updateOptions({
+        range: {
+          min: 0,
+          max: 1,
+        },
+        start: 1,
+        step: 0.1
+      });
+      sliderElement.noUiSlider.on('update', () => {
+        sliderValue.value = sliderElement.noUiSlider.get();
+        imgPreview.style.filter = `sepia(${sliderValue.value})`;
+      });
+      break;
+    case 'marvin':
+      sliderElement.noUiSlider.off('update');
+      sliderContainer.style.display = 'block';
+      sliderElement.noUiSlider.updateOptions({
+        range: {
+          min: 0,
+          max: 100,
+        },
+        start: 100,
+        step: 1
+      });
+      sliderElement.noUiSlider.on('update', () => {
+        sliderValue.value = sliderElement.noUiSlider.get();
+        imgPreview.style.filter = `invert(${sliderValue.value}%)`;
+      });
+      break;
+    case 'phobos':
+      sliderElement.noUiSlider.off('update');
+      sliderContainer.style.display = 'block';
+      sliderElement.noUiSlider.updateOptions({
+        range: {
+          min: 0,
+          max: 3,
+        },
+        start: 3,
+        step: 0.1
+      });
+      sliderElement.noUiSlider.on('update', () => {
+        sliderValue.value = sliderElement.noUiSlider.get();
+        imgPreview.style.filter = `blur(${sliderValue.value}px)`;
+      });
+      break;
+    case 'heat':
+      sliderElement.noUiSlider.off('update');
+      sliderContainer.style.display = 'block';
+      sliderElement.noUiSlider.updateOptions({
+        range: {
+          min: 1,
+          max: 3,
+        },
+        start: 3,
+        step: 0.1
+      });
+      sliderElement.noUiSlider.on('update', () => {
+        sliderValue.value = sliderElement.noUiSlider.get();
+        imgPreview.style.filter = `brightness(${sliderValue.value})`;
+      });
+      break;
+  }
+});
 
 const pristine = new Pristine(imgUploadForm, {
   classTo: 'img-upload__field-wrapper',
