@@ -8,13 +8,43 @@ const IMG_SCALE_STEP = 25;
 const IMG_SCALE_MAX = 100;
 const IMG_SCALE_MIN = 25;
 
-// const EFFECTS = {
-//   chrome: {
-//     min: 0,
-//     max: 1,
-//     step: 0.1
-//   }
-// };
+const EFFECTS = {
+  chrome: {
+    min: 0,
+    max: 1,
+    step: 0.1,
+    style: 'grayscale',
+    unit: ''
+  },
+  sepia: {
+    min: 0,
+    max: 1,
+    step: 0.1,
+    style: 'sepia',
+    unit: ''
+  },
+  marvin: {
+    min: 0,
+    max: 100,
+    step: 1,
+    style: 'invert',
+    unit: '%'
+  },
+  phobos: {
+    min: 0,
+    max: 3,
+    step: 0.1,
+    style: 'blur',
+    unit: 'px'
+  },
+  heat: {
+    min: 0,
+    max: 3,
+    step: 0.1,
+    style: 'brightness',
+    unit: ''
+  },
+};
 
 const imgUploadInput = document.querySelector('.img-upload__input');
 const imgUploadOverlay = document.querySelector('.img-upload__overlay');
@@ -64,94 +94,31 @@ noUiSlider.create(sliderElement, {
   connect: 'lower'
 });
 
+const changeEffect = ({min, max, step, style, unit}) => {
+  sliderElement.noUiSlider.off('update');
+  sliderContainer.style.display = 'block';
+  sliderElement.noUiSlider.updateOptions({
+    range: {
+      min: min,
+      max: max,
+    },
+    start: max,
+    step: step
+  });
+  sliderElement.noUiSlider.on('update', () => {
+    sliderValue.value = sliderElement.noUiSlider.get();
+    imgPreview.style.filter = `${style}(${sliderValue.value}${unit})`;
+  });
+};
+
 effectsList.addEventListener('change', (evt) => {
   const selectedEffect = evt.target.value;
-  switch (selectedEffect) {
-    case 'none':
-      sliderElement.noUiSlider.off('update');
-      sliderContainer.style.display = 'none';
-      imgPreview.style.removeProperty('filter');
-      break;
-    case 'chrome':
-      sliderElement.noUiSlider.off('update');
-      sliderContainer.style.display = 'block';
-      sliderElement.noUiSlider.updateOptions({
-        range: {
-          min: 0,
-          max: 1,
-        },
-        start: 1,
-        step: 0.1
-      });
-      sliderElement.noUiSlider.on('update', () => {
-        sliderValue.value = sliderElement.noUiSlider.get();
-        imgPreview.style.filter = `grayscale(${sliderValue.value})`;
-      });
-      break;
-    case 'sepia':
-      sliderElement.noUiSlider.off('update');
-      sliderContainer.style.display = 'block';
-      sliderElement.noUiSlider.updateOptions({
-        range: {
-          min: 0,
-          max: 1,
-        },
-        start: 1,
-        step: 0.1
-      });
-      sliderElement.noUiSlider.on('update', () => {
-        sliderValue.value = sliderElement.noUiSlider.get();
-        imgPreview.style.filter = `sepia(${sliderValue.value})`;
-      });
-      break;
-    case 'marvin':
-      sliderElement.noUiSlider.off('update');
-      sliderContainer.style.display = 'block';
-      sliderElement.noUiSlider.updateOptions({
-        range: {
-          min: 0,
-          max: 100,
-        },
-        start: 100,
-        step: 1
-      });
-      sliderElement.noUiSlider.on('update', () => {
-        sliderValue.value = sliderElement.noUiSlider.get();
-        imgPreview.style.filter = `invert(${sliderValue.value}%)`;
-      });
-      break;
-    case 'phobos':
-      sliderElement.noUiSlider.off('update');
-      sliderContainer.style.display = 'block';
-      sliderElement.noUiSlider.updateOptions({
-        range: {
-          min: 0,
-          max: 3,
-        },
-        start: 3,
-        step: 0.1
-      });
-      sliderElement.noUiSlider.on('update', () => {
-        sliderValue.value = sliderElement.noUiSlider.get();
-        imgPreview.style.filter = `blur(${sliderValue.value}px)`;
-      });
-      break;
-    case 'heat':
-      sliderElement.noUiSlider.off('update');
-      sliderContainer.style.display = 'block';
-      sliderElement.noUiSlider.updateOptions({
-        range: {
-          min: 1,
-          max: 3,
-        },
-        start: 3,
-        step: 0.1
-      });
-      sliderElement.noUiSlider.on('update', () => {
-        sliderValue.value = sliderElement.noUiSlider.get();
-        imgPreview.style.filter = `brightness(${sliderValue.value})`;
-      });
-      break;
+  if (selectedEffect === 'none') {
+    sliderElement.noUiSlider.off('update');
+    sliderContainer.style.display = 'none';
+    imgPreview.style.removeProperty('filter');
+  } else {
+    changeEffect(EFFECTS[selectedEffect]);
   }
 });
 
