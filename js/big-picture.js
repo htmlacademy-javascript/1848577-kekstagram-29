@@ -47,7 +47,7 @@ const renderComments = () => {
   commentsCount.textContent = commentsArray.length;
 };
 
-const onRenderComments = () => renderComments();
+const onCommentsClick = () => renderComments();
 
 const renderBigPicture = ({url, likes, description}) => {
   bigPicture.querySelector('.big-picture__img img').src = url;
@@ -62,19 +62,19 @@ const closeBigPicture = () => {
 
   document.removeEventListener('keydown', onDocumentKeydown);
   document.removeEventListener('keydown', onDocumentKeydown);
-  commentsLoader.removeEventListener('click', onRenderComments);
+  commentsLoader.removeEventListener('click', onCommentsClick);
   commentsShown = 0;
 };
 
-const onCloseBigPicture = () => closeBigPicture();
+const onBigPictureClick = () => closeBigPicture();
 
 const openBigPicture = () => {
   bigPicture.classList.remove('hidden');
   CONSTS.BODY.classList.add('modal-open');
 
-  bigPictureCancel.addEventListener('click', onCloseBigPicture);
+  bigPictureCancel.addEventListener('click', onBigPictureClick);
   document.addEventListener('keydown', onDocumentKeydown);
-  commentsLoader.addEventListener('click', onRenderComments);
+  commentsLoader.addEventListener('click', onCommentsClick);
 };
 
 const initBigPicture = (photos) => {
