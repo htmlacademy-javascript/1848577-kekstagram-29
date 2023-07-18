@@ -1,9 +1,19 @@
-import {createArrayOfPhotos} from './data.js';
+// import {createArrayOfPhotos} from './data.js';
 import {renderPictures} from './post.js';
 import {initBigPicture} from './big-picture.js';
-import './form.js';
+import {formSubmit} from './form.js';
+import {getData} from './api.js';
 
-const arrayOfPhotos = createArrayOfPhotos();
+// const arrayOfPhotos = createArrayOfPhotos();
 
-renderPictures(arrayOfPhotos);
-initBigPicture(arrayOfPhotos);
+try {
+  const posts = await getData();
+  renderPictures(posts);
+  initBigPicture(posts)
+} catch (err) {
+  console.log(err.message);
+}
+
+formSubmit();
+// renderPictures(arrayOfPhotos);
+// initBigPicture(arrayOfPhotos);
