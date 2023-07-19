@@ -66,6 +66,11 @@ const changeScaleBigger = () => {
   }
 };
 
+const resetScale = () => {
+  imgPreview.style.transform = 'scale(1)';
+  scaleControlValue.value = '100%';
+};
+
 scaleControlSmaller.addEventListener('click', changeScaleSmaller);
 scaleControlBigger.addEventListener('click', changeScaleBigger);
 
@@ -98,13 +103,19 @@ const changeEffect = ({min, max, step, style, unit}) => {
   });
 };
 
+const removeEffects = () => {
+  sliderElement.noUiSlider.off('update');
+  sliderContainer.style.display = 'none';
+  imgPreview.style.removeProperty('filter');
+};
+
 effectsList.addEventListener('change', (evt) => {
   const selectedEffect = evt.target.value;
   if (selectedEffect === 'none') {
-    sliderElement.noUiSlider.off('update');
-    sliderContainer.style.display = 'none';
-    imgPreview.style.removeProperty('filter');
+    removeEffects();
   } else {
     changeEffect(EFFECTS[selectedEffect]);
   }
 });
+
+export {removeEffects, resetScale};
