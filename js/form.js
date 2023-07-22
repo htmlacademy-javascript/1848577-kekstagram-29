@@ -1,126 +1,20 @@
 import {isEscapeKey, CONSTS} from './util.js';
+import {removeEffects, resetScale} from './effects.js';
+import {sendData} from './api.js';
 
 const MAX_HASHTAG_COUNT = 5;
 const MAX_HASHTAG_LENGTH = 20;
 const VALID_HASHTAG_SYMBOLS = /^#[a-zа-яё0-9]{1,19}$/i;
 
-const IMG_SCALE_STEP = 25;
-const IMG_SCALE_MAX = 100;
-const IMG_SCALE_MIN = 25;
-
-const EFFECTS = {
-  chrome: {
-    min: 0,
-    max: 1,
-    step: 0.1,
-    style: 'grayscale',
-    unit: ''
-  },
-  sepia: {
-    min: 0,
-    max: 1,
-    step: 0.1,
-    style: 'sepia',
-    unit: ''
-  },
-  marvin: {
-    min: 0,
-    max: 100,
-    step: 1,
-    style: 'invert',
-    unit: '%'
-  },
-  phobos: {
-    min: 0,
-    max: 3,
-    step: 0.1,
-    style: 'blur',
-    unit: 'px'
-  },
-  heat: {
-    min: 0,
-    max: 3,
-    step: 0.1,
-    style: 'brightness',
-    unit: ''
-  },
-};
-
 const imgUploadInput = document.querySelector('.img-upload__input');
 const imgUploadOverlay = document.querySelector('.img-upload__overlay');
 const imgUploadCancel = document.querySelector('.img-upload__cancel');
 const imgUploadForm = document.querySelector('.img-upload__form');
+const submitButton = document.querySelector('.img-upload__submit');
 const hashtagsField = document.querySelector('.text__hashtags');
 const commentField = document.querySelector('.text__description');
 
-const scaleControlSmaller = document.querySelector('.scale__control--smaller');
-const scaleControlBigger = document.querySelector('.scale__control--bigger');
-const scaleControlValue = document.querySelector('.scale__control--value');
-const imgPreview = document.querySelector('.img-upload__preview').querySelector('img');
-
-const sliderContainer = document.querySelector('.img-upload__effect-level');
-const sliderElement = sliderContainer.querySelector('.effect-level__slider');
-const sliderValue = sliderContainer.querySelector('.effect-level__value');
-const effectsList = document.querySelector('.effects__list');
-
-const changeScaleSmaller = () => {
-  if (parseInt(scaleControlValue.value, 10) > IMG_SCALE_MIN) {
-    const imgPreviewStep = (parseInt(scaleControlValue.value, 10) - IMG_SCALE_STEP) / 100;
-    imgPreview.style.transform = `scale(${imgPreviewStep})`;
-    scaleControlValue.value = `${imgPreviewStep * 100}%`;
-  }
-};
-
-const changeScaleBigger = () => {
-  if (parseInt(scaleControlValue.value, 10) < IMG_SCALE_MAX) {
-    const imgPreviewStep = (parseInt(scaleControlValue.value, 10) + IMG_SCALE_STEP) / 100;
-    imgPreview.style.transform = `scale(${imgPreviewStep})`;
-    scaleControlValue.value = `${imgPreviewStep * 100}%`;
-  }
-};
-
-scaleControlSmaller.addEventListener('click', changeScaleSmaller);
-scaleControlBigger.addEventListener('click', changeScaleBigger);
-
-sliderValue.value = 100;
-
-noUiSlider.create(sliderElement, {
-  range: {
-    min: 0,
-    max: 100,
-  },
-  start: 100,
-  step: 1,
-  connect: 'lower'
-});
-
-const changeEffect = ({min, max, step, style, unit}) => {
-  sliderElement.noUiSlider.off('update');
-  sliderContainer.style.display = 'block';
-  sliderElement.noUiSlider.updateOptions({
-    range: {
-      min: min,
-      max: max,
-    },
-    start: max,
-    step: step
-  });
-  sliderElement.noUiSlider.on('update', () => {
-    sliderValue.value = sliderElement.noUiSlider.get();
-    imgPreview.style.filter = `${style}(${sliderValue.value}${unit})`;
-  });
-};
-
-effectsList.addEventListener('change', (evt) => {
-  const selectedEffect = evt.target.value;
-  if (selectedEffect === 'none') {
-    sliderElement.noUiSlider.off('update');
-    sliderContainer.style.display = 'none';
-    imgPreview.style.removeProperty('filter');
-  } else {
-    changeEffect(EFFECTS[selectedEffect]);
-  }
-});
+let isMessageOpen = false;
 
 const pristine = new Pristine(imgUploadForm, {
   classTo: 'img-upload__field-wrapper',
@@ -129,6 +23,7 @@ const pristine = new Pristine(imgUploadForm, {
 
 const OnUploadOverlayOpen = () => {
   imgUploadOverlay.classList.remove('hidden');
+  removeEffects();
   CONSTS.BODY.classList.add('modal-open');
   imgUploadCancel.addEventListener('click', onUploadCancel);
   document.addEventListener('keydown', onDocumentKeydown);
@@ -145,7 +40,7 @@ function onUploadCancel () {
 const isTextFieldFocused = () => document.activeElement === hashtagsField || document.activeElement === commentField;
 
 function onDocumentKeydown (evt) {
-  if (isEscapeKey(evt) && !isTextFieldFocused()) {
+  if (isEscapeKey(evt) && !isTextFieldFocused() && !isMessageOpen) {
     evt.preventDefault();
     onUploadCancel();
   }
@@ -170,7 +65,74 @@ pristine.addValidator(hashtagsField, hasValidSymbols, 'Недопустимый 
 pristine.addValidator(hashtagsField, hasUniqueTags, 'Один и тот же хэш-тег не может быть использован дважды', 1, true);
 
 imgUploadInput.addEventListener('change', OnUploadOverlayOpen);
-imgUploadForm.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  pristine.validate();
-});
+
+const blockSubmitButton = () => {
+  submitButton.disable = true;
+};
+
+const unblockSubmitButton = () => {
+  submitButton.disable = false;
+};
+
+const successMessageTemplate = document.querySelector('#success').content.querySelector('.success');
+const successMessage = successMessageTemplate.cloneNode(true);
+
+const errorMessageTemplate = document.querySelector('#error').content.querySelector('.error');
+const errorMessage = errorMessageTemplate.cloneNode(true);
+
+const closeMessage = () => {
+  const message = document.querySelector('.error') || document.querySelector('.success');
+  message.remove();
+  document.removeEventListener('keydown', onDocumentMessageKeydown);
+  CONSTS.BODY.removeEventListener('click', onBodyClick);
+  isMessageOpen = false;
+};
+const onClickButtonClose = () => closeMessage();
+
+function onBodyClick(evt) {
+  if (evt.target.closest('.error__inner') || evt.target.closest('.success__inner')) {
+    return;
+  }
+  closeMessage();
+}
+
+function onDocumentMessageKeydown(evt) {
+  if (isEscapeKey(evt)) {
+    evt.preventDefault();
+    closeMessage();
+  }
+}
+
+const createMessage = (messageElement, closeButtonClick, reset = false) => {
+  if (reset) {
+    imgUploadForm.reset();
+    pristine.reset();
+    removeEffects();
+    resetScale();
+  }
+  isMessageOpen = true;
+  CONSTS.BODY.append(messageElement);
+  document.addEventListener('keydown', onDocumentMessageKeydown);
+  CONSTS.BODY.addEventListener('click', onBodyClick);
+  messageElement.querySelector(closeButtonClick).addEventListener('click', onClickButtonClose);
+};
+
+const showMessageSuccess = () => createMessage(successMessage, '.success__button', true);
+const showMessageError = () => createMessage(errorMessage, '.error__button');
+
+const formSubmit = () => {
+  imgUploadForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+
+    const isValid = pristine.validate();
+    if (isValid) {
+      blockSubmitButton();
+      sendData(new FormData(evt.target))
+        .then(showMessageSuccess)
+        .catch(showMessageError)
+        .finally(unblockSubmitButton);
+    }
+  });
+};
+
+export {formSubmit};
