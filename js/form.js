@@ -2,11 +2,13 @@ import {isEscapeKey, CONSTS} from './util.js';
 import {removeEffects, resetScale} from './effects.js';
 import {sendData} from './api.js';
 
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 const MAX_HASHTAG_COUNT = 5;
 const MAX_HASHTAG_LENGTH = 20;
 const VALID_HASHTAG_SYMBOLS = /^#[a-zа-яё0-9]{1,19}$/i;
 
 const imgUploadInput = document.querySelector('.img-upload__input');
+const imgUploadPreview = document.querySelector('.img-upload__preview').querySelector('img');
 const imgUploadOverlay = document.querySelector('.img-upload__overlay');
 const imgUploadCancel = document.querySelector('.img-upload__cancel');
 const imgUploadForm = document.querySelector('.img-upload__form');
@@ -23,6 +25,12 @@ const pristine = new Pristine(imgUploadForm, {
 
 const OnUploadOverlayOpen = () => {
   imgUploadOverlay.classList.remove('hidden');
+  const file = imgUploadInput.files[0];
+  const fileName = file.name.toLowerCase();
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+  if (matches) {
+    imgUploadPreview.src = URL.createObjectURL(file);
+  }
   removeEffects();
   CONSTS.BODY.classList.add('modal-open');
   imgUploadCancel.addEventListener('click', onUploadCancel);
