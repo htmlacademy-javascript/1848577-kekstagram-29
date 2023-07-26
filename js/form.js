@@ -15,6 +15,7 @@ const imgUploadForm = document.querySelector('.img-upload__form');
 const submitButton = document.querySelector('.img-upload__submit');
 const hashtagsField = document.querySelector('.text__hashtags');
 const commentField = document.querySelector('.text__description');
+const effectsPreviews = document.querySelectorAll('.effects__preview');
 
 let isMessageOpen = false;
 
@@ -30,6 +31,9 @@ const OnUploadOverlayOpen = () => {
   const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
   if (matches) {
     imgUploadPreview.src = URL.createObjectURL(file);
+    effectsPreviews.forEach((preview) => {
+      preview.style.backgroundImage = `url('${imgUploadPreview.src}')`;
+    });
   }
   removeEffects();
   CONSTS.BODY.classList.add('modal-open');
