@@ -29,8 +29,6 @@ function createRandomIdFromRangeGenerator (min, max) {
   };
 }
 
-const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
-
 const isEscapeKey = (evt) => evt.key === 'Escape';
 
 const showAlert = (message) => {
@@ -63,4 +61,4 @@ const debounce = (callback, timeoutDelay = 500) => {
   };
 };
 
-export {getRandomInteger, createRandomIdFromRangeGenerator, getRandomArrayElement, isEscapeKey, CONSTS, showAlert, debounce};
+export {createRandomIdFromRangeGenerator, isEscapeKey, CONSTS, showAlert, debounce};
