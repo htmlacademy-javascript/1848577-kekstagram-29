@@ -7,7 +7,7 @@ const filtersBlock = document.querySelector('.img-filters');
 
 const debouncedRender = debounce(renderPictures, FILTERS_DELAY);
 
-const getDefaultPosts = (posts) =>posts;
+const getDefaultPosts = (posts) => posts;
 
 const getRandomPosts = (posts) => {
   const getRandomId = createRandomIdFromRangeGenerator(0, posts.length - 1);
