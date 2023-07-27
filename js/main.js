@@ -8,7 +8,7 @@ import {renderSortedPosts} from './filters.js';
 try {
   const posts = await getData();
   renderPictures(posts);
-  renderSortedPosts(posts, renderPictures, initBigPicture);
+  renderSortedPosts(posts, initBigPicture);
 } catch (err) {
   showAlert(err.message);
 }

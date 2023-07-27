@@ -79,11 +79,11 @@ pristine.addValidator(hashtagsField, hasUniqueTags, 'Один и тот же х�
 imgUploadInput.addEventListener('change', OnUploadOverlayOpen);
 
 const blockSubmitButton = () => {
-  submitButton.disable = true;
+  submitButton.disabled = true;
 };
 
 const unblockSubmitButton = () => {
-  submitButton.disable = false;
+  submitButton.disabled = false;
 };
 
 const successMessageTemplate = document.querySelector('#success').content.querySelector('.success');
@@ -141,6 +141,7 @@ const formSubmit = () => {
       blockSubmitButton();
       sendData(new FormData(evt.target))
         .then(showMessageSuccess)
+        .then(onUploadCancel)
         .catch(showMessageError)
         .finally(unblockSubmitButton);
     }
