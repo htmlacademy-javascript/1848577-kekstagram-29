@@ -40,41 +40,45 @@ const EFFECTS = {
   },
 };
 
-const scaleControlSmaller = document.querySelector('.scale__control--smaller');
-const scaleControlBigger = document.querySelector('.scale__control--bigger');
-const scaleControlValue = document.querySelector('.scale__control--value');
-const imgPreview = document.querySelector('.img-upload__preview').querySelector('img');
+const scaleControlSmallerElement = document.querySelector('.scale__control--smaller');
+const scaleControlBiggerElement = document.querySelector('.scale__control--bigger');
+const scaleControlValueElement = document.querySelector('.scale__control--value');
+const imgPreviewElement = document.querySelector('.img-upload__preview').querySelector('img');
 
-const sliderContainer = document.querySelector('.img-upload__effect-level');
-const sliderElement = sliderContainer.querySelector('.effect-level__slider');
-const sliderValue = sliderContainer.querySelector('.effect-level__value');
-const effectsList = document.querySelector('.effects__list');
+const sliderContainerElement = document.querySelector('.img-upload__effect-level');
+const sliderElement = sliderContainerElement.querySelector('.effect-level__slider');
+const sliderValueElement = sliderContainerElement.querySelector('.effect-level__value');
+const effectsListElement = document.querySelector('.effects__list');
 
 const changeScaleSmaller = () => {
-  if (parseInt(scaleControlValue.value, 10) > IMG_SCALE_MIN) {
-    const imgPreviewStep = (parseInt(scaleControlValue.value, 10) - IMG_SCALE_STEP) / 100;
-    imgPreview.style.transform = `scale(${imgPreviewStep})`;
-    scaleControlValue.value = `${imgPreviewStep * 100}%`;
+  if (parseInt(scaleControlValueElement.value, 10) > IMG_SCALE_MIN) {
+    const imgPreviewStep = (parseInt(scaleControlValueElement.value, 10) - IMG_SCALE_STEP) / 100;
+    imgPreviewElement.style.transform = `scale(${imgPreviewStep})`;
+    scaleControlValueElement.value = `${imgPreviewStep * 100}%`;
   }
 };
+
+const onChangeScaleSmaller = () => changeScaleSmaller();
 
 const changeScaleBigger = () => {
-  if (parseInt(scaleControlValue.value, 10) < IMG_SCALE_MAX) {
-    const imgPreviewStep = (parseInt(scaleControlValue.value, 10) + IMG_SCALE_STEP) / 100;
-    imgPreview.style.transform = `scale(${imgPreviewStep})`;
-    scaleControlValue.value = `${imgPreviewStep * 100}%`;
+  if (parseInt(scaleControlValueElement.value, 10) < IMG_SCALE_MAX) {
+    const imgPreviewStep = (parseInt(scaleControlValueElement.value, 10) + IMG_SCALE_STEP) / 100;
+    imgPreviewElement.style.transform = `scale(${imgPreviewStep})`;
+    scaleControlValueElement.value = `${imgPreviewStep * 100}%`;
   }
 };
 
+const onChangeScaleBigger = () => changeScaleBigger();
+
 const resetScale = () => {
-  imgPreview.style.transform = 'scale(1)';
-  scaleControlValue.value = '100%';
+  imgPreviewElement.style.transform = 'scale(1)';
+  scaleControlValueElement.value = '100%';
 };
 
-scaleControlSmaller.addEventListener('click', changeScaleSmaller);
-scaleControlBigger.addEventListener('click', changeScaleBigger);
+scaleControlSmallerElement.addEventListener('click', onChangeScaleSmaller);
+scaleControlBiggerElement.addEventListener('click', onChangeScaleBigger);
 
-sliderValue.value = 100;
+sliderValueElement.value = 100;
 
 noUiSlider.create(sliderElement, {
   range: {
@@ -88,7 +92,7 @@ noUiSlider.create(sliderElement, {
 
 const changeEffect = ({min, max, step, style, unit}) => {
   sliderElement.noUiSlider.off('update');
-  sliderContainer.style.display = 'block';
+  sliderContainerElement.style.display = 'block';
   sliderElement.noUiSlider.updateOptions({
     range: {
       min: min,
@@ -98,18 +102,18 @@ const changeEffect = ({min, max, step, style, unit}) => {
     step: step
   });
   sliderElement.noUiSlider.on('update', () => {
-    sliderValue.value = sliderElement.noUiSlider.get();
-    imgPreview.style.filter = `${style}(${sliderValue.value}${unit})`;
+    sliderValueElement.value = sliderElement.noUiSlider.get();
+    imgPreviewElement.style.filter = `${style}(${sliderValueElement.value}${unit})`;
   });
 };
 
 const removeEffects = () => {
   sliderElement.noUiSlider.off('update');
-  sliderContainer.style.display = 'none';
-  imgPreview.style.removeProperty('filter');
+  sliderContainerElement.style.display = 'none';
+  imgPreviewElement.style.removeProperty('filter');
 };
 
-effectsList.addEventListener('change', (evt) => {
+effectsListElement.addEventListener('change', (evt) => {
   const selectedEffect = evt.target.value;
   if (selectedEffect === 'none') {
     removeEffects();
