@@ -3,7 +3,7 @@ import {renderPictures} from './post.js';
 
 const RANDOM_PHOTOS_COUNT = 10;
 const FILTERS_DELAY = 500;
-const filtersBlock = document.querySelector('.img-filters');
+const filtersBlockElement = document.querySelector('.img-filters');
 
 const debouncedRender = debounce(renderPictures, FILTERS_DELAY);
 
@@ -34,11 +34,11 @@ const SortOptions = {
 };
 
 const renderSortedPosts = (posts, init) => {
-  filtersBlock.classList.remove('img-filters--inactive');
+  filtersBlockElement.classList.remove('img-filters--inactive');
 
-  filtersBlock.addEventListener('click', (evt) => {
+  filtersBlockElement.addEventListener('click', (evt) => {
     if (evt.target.classList.contains('img-filters__button')) {
-      filtersBlock
+      filtersBlockElement
         .querySelector('.img-filters__button--active')
         .classList.remove('img-filters__button--active');
       evt.target.classList.add('img-filters__button--active');

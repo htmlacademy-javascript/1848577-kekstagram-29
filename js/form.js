@@ -7,49 +7,49 @@ const MAX_HASHTAG_COUNT = 5;
 const MAX_HASHTAG_LENGTH = 20;
 const VALID_HASHTAG_SYMBOLS = /^#[a-zа-яё0-9]{1,19}$/i;
 
-const imgUploadInput = document.querySelector('.img-upload__input');
-const imgUploadPreview = document.querySelector('.img-upload__preview').querySelector('img');
-const imgUploadOverlay = document.querySelector('.img-upload__overlay');
-const imgUploadCancel = document.querySelector('.img-upload__cancel');
-const imgUploadForm = document.querySelector('.img-upload__form');
-const submitButton = document.querySelector('.img-upload__submit');
-const hashtagsField = document.querySelector('.text__hashtags');
-const commentField = document.querySelector('.text__description');
-const effectsPreviews = document.querySelectorAll('.effects__preview');
+const imgUploadInputElement = document.querySelector('.img-upload__input');
+const imgUploadPreviewElement = document.querySelector('.img-upload__preview').querySelector('img');
+const imgUploadOverlayElement = document.querySelector('.img-upload__overlay');
+const imgUploadCancelElement = document.querySelector('.img-upload__cancel');
+const imgUploadFormElement = document.querySelector('.img-upload__form');
+const submitButtonElement = document.querySelector('.img-upload__submit');
+const hashtagsFieldElement = document.querySelector('.text__hashtags');
+const commentFieldElement = document.querySelector('.text__description');
+const effectsPreviewsElement = document.querySelectorAll('.effects__preview');
 
 let isMessageOpen = false;
 
-const pristine = new Pristine(imgUploadForm, {
+const pristine = new Pristine(imgUploadFormElement, {
   classTo: 'img-upload__field-wrapper',
   errorTextParent: 'img-upload__field-wrapper',
 });
 
 const OnUploadOverlayOpen = () => {
-  imgUploadOverlay.classList.remove('hidden');
-  const file = imgUploadInput.files[0];
+  imgUploadOverlayElement.classList.remove('hidden');
+  const file = imgUploadInputElement.files[0];
   const fileName = file.name.toLowerCase();
   const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
   if (matches) {
-    imgUploadPreview.src = URL.createObjectURL(file);
-    effectsPreviews.forEach((preview) => {
-      preview.style.backgroundImage = `url('${imgUploadPreview.src}')`;
+    imgUploadPreviewElement.src = URL.createObjectURL(file);
+    effectsPreviewsElement.forEach((preview) => {
+      preview.style.backgroundImage = `url('${imgUploadPreviewElement.src}')`;
     });
   }
   removeEffects();
   CONSTS.BODY.classList.add('modal-open');
-  imgUploadCancel.addEventListener('click', onUploadCancel);
+  imgUploadCancelElement.addEventListener('click', onUploadCancel);
   document.addEventListener('keydown', onDocumentKeydown);
 };
 
 function onUploadCancel () {
-  imgUploadForm.reset();
+  imgUploadFormElement.reset();
   pristine.reset();
-  imgUploadOverlay.classList.add('hidden');
+  imgUploadOverlayElement.classList.add('hidden');
   CONSTS.BODY.classList.remove('modal-open');
   document.removeEventListener('keydown', onDocumentKeydown);
 }
 
-const isTextFieldFocused = () => document.activeElement === hashtagsField || document.activeElement === commentField;
+const isTextFieldFocused = () => document.activeElement === hashtagsFieldElement || document.activeElement === commentFieldElement;
 
 function onDocumentKeydown (evt) {
   if (isEscapeKey(evt) && !isTextFieldFocused() && !isMessageOpen) {
@@ -71,30 +71,30 @@ const hasUniqueTags = (value) => {
   return lowerCaseHashtags.length === new Set(lowerCaseHashtags).size;
 };
 
-pristine.addValidator(hashtagsField, hasValidLength, `Максимальная длина одного хэш-тега ${MAX_HASHTAG_LENGTH} символов, включая решётку`, 4, true);
-pristine.addValidator(hashtagsField, hasValidCount, `Нельзя указать больше ${MAX_HASHTAG_COUNT} хэш-тегов`, 3, true);
-pristine.addValidator(hashtagsField, hasValidSymbols, 'Недопустимый хэш-тег', 2, true);
-pristine.addValidator(hashtagsField, hasUniqueTags, 'Один и тот же хэш-тег не может быть использован дважды', 1, true);
+pristine.addValidator(hashtagsFieldElement, hasValidLength, `Максимальная длина одного хэш-тега ${MAX_HASHTAG_LENGTH} символов, включая решётку`, 4, true);
+pristine.addValidator(hashtagsFieldElement, hasValidCount, `Нельзя указать больше ${MAX_HASHTAG_COUNT} хэш-тегов`, 3, true);
+pristine.addValidator(hashtagsFieldElement, hasValidSymbols, 'Недопустимый хэш-тег', 2, true);
+pristine.addValidator(hashtagsFieldElement, hasUniqueTags, 'Один и тот же хэш-тег не может быть использован дважды', 1, true);
 
-imgUploadInput.addEventListener('change', OnUploadOverlayOpen);
+imgUploadInputElement.addEventListener('change', OnUploadOverlayOpen);
 
 const blockSubmitButton = () => {
-  submitButton.disabled = true;
+  submitButtonElement.disabled = true;
 };
 
 const unblockSubmitButton = () => {
-  submitButton.disabled = false;
+  submitButtonElement.disabled = false;
 };
 
-const successMessageTemplate = document.querySelector('#success').content.querySelector('.success');
-const successMessage = successMessageTemplate.cloneNode(true);
+const successMessageTemplateElement = document.querySelector('#success').content.querySelector('.success');
+const successMessage = successMessageTemplateElement.cloneNode(true);
 
-const errorMessageTemplate = document.querySelector('#error').content.querySelector('.error');
-const errorMessage = errorMessageTemplate.cloneNode(true);
+const errorMessageTemplateElement = document.querySelector('#error').content.querySelector('.error');
+const errorMessage = errorMessageTemplateElement.cloneNode(true);
 
 const closeMessage = () => {
-  const message = document.querySelector('.error') || document.querySelector('.success');
-  message.remove();
+  const messageElement = document.querySelector('.error') || document.querySelector('.success');
+  messageElement.remove();
   document.removeEventListener('keydown', onDocumentMessageKeydown);
   CONSTS.BODY.removeEventListener('click', onBodyClick);
   isMessageOpen = false;
@@ -117,7 +117,7 @@ function onDocumentMessageKeydown(evt) {
 
 const createMessage = (messageElement, closeButtonClick, reset = false) => {
   if (reset) {
-    imgUploadForm.reset();
+    imgUploadFormElement.reset();
     pristine.reset();
     removeEffects();
     resetScale();
@@ -133,7 +133,7 @@ const showMessageSuccess = () => createMessage(successMessage, '.success__button
 const showMessageError = () => createMessage(errorMessage, '.error__button');
 
 const formSubmit = () => {
-  imgUploadForm.addEventListener('submit', (evt) => {
+  imgUploadFormElement.addEventListener('submit', (evt) => {
     evt.preventDefault();
 
     const isValid = pristine.validate();
