@@ -24,7 +24,7 @@ const pristine = new Pristine(imgUploadFormElement, {
   errorTextParent: 'img-upload__field-wrapper',
 });
 
-const OnUploadOverlayOpen = () => {
+const OnImgUploadInputElementChange = () => {
   imgUploadOverlayElement.classList.remove('hidden');
   const file = imgUploadInputElement.files[0];
   const fileName = file.name.toLowerCase();
@@ -37,11 +37,11 @@ const OnUploadOverlayOpen = () => {
   }
   removeEffects();
   CONSTS.BODY.classList.add('modal-open');
-  imgUploadCancelElement.addEventListener('click', onUploadCancel);
+  imgUploadCancelElement.addEventListener('click', onUploadCancelElementClick);
   document.addEventListener('keydown', onDocumentKeydown);
 };
 
-function onUploadCancel () {
+function onUploadCancelElementClick () {
   imgUploadFormElement.reset();
   pristine.reset();
   imgUploadOverlayElement.classList.add('hidden');
@@ -54,7 +54,7 @@ const isTextFieldFocused = () => document.activeElement === hashtagsFieldElement
 function onDocumentKeydown (evt) {
   if (isEscapeKey(evt) && !isTextFieldFocused() && !isMessageOpen) {
     evt.preventDefault();
-    onUploadCancel();
+    onUploadCancelElementClick();
   }
 }
 
@@ -76,7 +76,7 @@ pristine.addValidator(hashtagsFieldElement, hasValidCount, `Нельзя ука�
 pristine.addValidator(hashtagsFieldElement, hasValidSymbols, 'Недопустимый хэш-тег', 2, true);
 pristine.addValidator(hashtagsFieldElement, hasUniqueTags, 'Один и тот же хэш-тег не может быть использован дважды', 1, true);
 
-imgUploadInputElement.addEventListener('change', OnUploadOverlayOpen);
+imgUploadInputElement.addEventListener('change', OnImgUploadInputElementChange);
 
 const blockSubmitButton = () => {
   submitButtonElement.disabled = true;
@@ -99,7 +99,7 @@ const closeMessage = () => {
   CONSTS.BODY.removeEventListener('click', onBodyClick);
   isMessageOpen = false;
 };
-const onClickButtonClose = () => closeMessage();
+const onCloseButtonClick = () => closeMessage();
 
 function onBodyClick(evt) {
   if (evt.target.closest('.error__inner') || evt.target.closest('.success__inner')) {
@@ -115,7 +115,7 @@ function onDocumentMessageKeydown(evt) {
   }
 }
 
-const createMessage = (messageElement, closeButtonClick, reset = false) => {
+const createMessage = (messageElement, closeButton, reset = false) => {
   if (reset) {
     imgUploadFormElement.reset();
     pristine.reset();
@@ -126,7 +126,7 @@ const createMessage = (messageElement, closeButtonClick, reset = false) => {
   CONSTS.BODY.append(messageElement);
   document.addEventListener('keydown', onDocumentMessageKeydown);
   CONSTS.BODY.addEventListener('click', onBodyClick);
-  messageElement.querySelector(closeButtonClick).addEventListener('click', onClickButtonClose);
+  messageElement.querySelector(closeButton).addEventListener('click', onCloseButtonClick);
 };
 
 const showMessageSuccess = () => createMessage(successMessage, '.success__button', true);
@@ -141,7 +141,7 @@ const formSubmit = () => {
       blockSubmitButton();
       sendData(new FormData(evt.target))
         .then(showMessageSuccess)
-        .then(onUploadCancel)
+        .then(onUploadCancelElementClick)
         .catch(showMessageError)
         .finally(unblockSubmitButton);
     }

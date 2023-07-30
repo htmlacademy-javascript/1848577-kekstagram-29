@@ -58,7 +58,7 @@ const changeScaleSmaller = () => {
   }
 };
 
-const onChangeScaleSmaller = () => changeScaleSmaller();
+const onScaleControlSmallerElementClick = () => changeScaleSmaller();
 
 const changeScaleBigger = () => {
   if (parseInt(scaleControlValueElement.value, 10) < IMG_SCALE_MAX) {
@@ -68,15 +68,15 @@ const changeScaleBigger = () => {
   }
 };
 
-const onChangeScaleBigger = () => changeScaleBigger();
+const onScaleControlBiggerElementClick = () => changeScaleBigger();
 
 const resetScale = () => {
   imgPreviewElement.style.transform = 'scale(1)';
   scaleControlValueElement.value = '100%';
 };
 
-scaleControlSmallerElement.addEventListener('click', onChangeScaleSmaller);
-scaleControlBiggerElement.addEventListener('click', onChangeScaleBigger);
+scaleControlSmallerElement.addEventListener('click', onScaleControlSmallerElementClick);
+scaleControlBiggerElement.addEventListener('click', onScaleControlBiggerElementClick);
 
 sliderValueElement.value = 100;
 
